@@ -86,3 +86,13 @@ defmodule RealtimeApp.Worker do
 end
 
 ```
+
+## Running Tests
+
+There's a docker compose setup in `./docker` that can be used for development and
+testing.
+
+```bash
+make start && sleep 5
+make test
+```

@@ -1,0 +1,29 @@
+version: '3'
+services:
+  realtime:
+    image: supabase/realtime:latest
+    ports:
+      - "4000:4000"
+    environment:
+      DB_HOST: db
+      DB_NAME: postgres
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_PORT: 5432
+      PORT: 4000
+      JWT_SECRET: SOMETHING_SUPER_SECRET
+      SECURE_CHANNELS: 'false'
+    depends_on:
+      - db
+  db:
+    image: supabase/postgres
+    ports:
+      - "5432:5432"
+    volumes:
+    - ./db:/docker-entrypoint-initdb.d/
+    command:
+    - postgres
+    - -c
+    - wal_level=logical
+    environment: 
+      POSTGRES_PASSWORD: postgres
