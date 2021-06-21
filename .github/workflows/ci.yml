@@ -1,0 +1,21 @@
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-20.04
+
+    env:
+      MIX_ENV: test
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v2
+      - uses: erlef/setup-elixir@v1.7
+        with:
+          otp-version: "24"
+          elixir-version: "1.12.1"
+      - run: mix deps.get
+      - run: make coveralls.github
