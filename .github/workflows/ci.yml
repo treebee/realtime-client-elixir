@@ -17,5 +17,6 @@ jobs:
         with:
           otp-version: "24"
           elixir-version: "1.12.1"
+      - run: make start
       - run: mix deps.get
       - run: make coveralls.github
