@@ -1,6 +1,14 @@
 
+run: start
+
 start:
 	docker-compose -f docker/docker-compose.yml up -d
+
+stop:
+	docker-compose -f docker/docker-compose.yml stop
+
+logs:
+	docker-compose -f docker/docker-compose.yml logs -f
 
 test: start
 	mix test
@@ -8,4 +16,7 @@ test: start
 coveralls.github: start
 	mix coveralls.github
 
-.PHONY: start test
+psql:
+	psql -h localhost -U postgres
+
+.PHONY: start test logs stop run

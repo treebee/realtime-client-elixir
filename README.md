@@ -21,6 +21,7 @@ end
 ```elixir
 config :realtime_client,
   endpoint: "ws://localhost:4000/socket/websocket"
+  apikey: "some-JWT" # when using secure channels
 ```
 
 ## Starting the Client Socket

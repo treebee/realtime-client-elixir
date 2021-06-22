@@ -7,6 +7,12 @@ defmodule RealtimeClientTest do
 
   Application.put_env(
     :realtime_client,
+    :apikey,
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJc3N1ZXIiOiJJc3N1ZXIifQ.LNcM66Tt3ejSf0fHJ-I8yh8Hgfmvh8I_CXyBIOU8S6c"
+  )
+
+  Application.put_env(
+    :realtime_client,
     Repo,
     url: "ecto://postgres:postgres@localhost/postgres",
     password: "postgres",
@@ -38,18 +44,23 @@ defmodule RealtimeClientTest do
     ]
 
     {:ok, _} = Supervisor.start_link(children, strategy: :one_for_one)
+
     :ok
   end
 
   test "Connects to Socket on start" do
-    start_supervised(RealtimeClient)
+    {:ok, socket} =
+      RealtimeClient.start_link(
+        url: "ws://localhost:4000/socket/websocket",
+        apikey:
+          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJc3N1ZXIiOiJJc3N1ZXIifQ.LNcM66Tt3ejSf0fHJ-I8yh8Hgfmvh8I_CXyBIOU8S6c"
+      )
 
-    assert wait_for_socket(Realtime.Socket)
+    assert wait_for_socket(socket)
   end
 
   test "Can subscribe to topic" do
     start_supervised(RealtimeClient)
-
     wait_for_socket(Realtime.Socket)
 
     assert {:ok, _channel} = RealtimeClient.subscribe("realtime:*")
@@ -57,8 +68,6 @@ defmodule RealtimeClientTest do
 
   test "Can receive message" do
     start_supervised(RealtimeClient)
-    start_supervised(Repo)
-
     wait_for_socket(Realtime.Socket)
 
     {:ok, _channel} = RealtimeClient.subscribe("realtime:*")

@@ -16,6 +16,12 @@ defmodule RealtimeClient do
     url = Application.fetch_env!(:realtime_client, :endpoint)
     socket_opts = [url: url]
 
+    socket_opts =
+      case Application.fetch_env!(:realtime_client, :apikey) do
+        nil -> socket_opts
+        apikey -> Keyword.put(socket_opts, :params, %{apikey: apikey})
+      end
+
     Socket.child_spec({socket_opts, name: Realtime.Socket})
   end
 
