@@ -1,3 +1,5 @@
+[![.github/workflows/ci.yml](https://github.com/treebee/realtime-client-elixir/actions/workflows/ci.yml/badge.svg)](https://github.com/treebee/realtime-client-elixir/actions/workflows/ci.yml) [![Coverage Status](https://coveralls.io/repos/github/treebee/realtime-client-elixir/badge.svg?branch=main)](https://coveralls.io/github/treebee/realtime-client-elixir?branch=main)
+
 # RealtimeClient
 
 Client for connecting to [realtime](https://github.com/supabase/realtime).
