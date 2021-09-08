@@ -18,6 +18,52 @@ def deps do
 end
 ```
 
+## Getting Started
+
+First you have to create a client Socket:
+
+```elixir
+options = [
+  url: "ws://realtime-server:4000/socket/websocket",
+]
+{:ok, socket} = RealtimeClient.socket(options)
+```
+
+Once you have a connected socket, you can subscribe to topics:
+
+```elixir
+{:ok, channel} = RealtimeClient.subscribe(socket, "realtime:*")
+```
+
+You can also subscribe to a specific channel (row level changes):
+
+```elixir
+{:ok, channel} = RealtimeClient.subscribe(socket, "realtime:public:users:id=eq.42")
+```
+
+Consuming events is done with `handle_info` callbacks:
+
+```elixir
+alias PhoenixClient.Message
+
+# handle `INSERT` events
+def handle_info(%Message{event: "INSERT", payload: %{"record" => record}} = msg, state) do
+    # do something with record
+    {:noreply, state}
+end
+
+# handle `DELETE` events
+def handle_info(%Message{event: "DELETE", payload: %{"record" => record}} = msg, state) do
+    IO.inspect(record, label: "DELETE")
+    {:noreply, state}
+end
+
+# match all cases not handled above
+def handle_info(%Message{} = msg, state) do
+    {:noreply, state}
+end
+```
+
 ## Configuration
 
 ```elixir
@@ -26,9 +72,10 @@ config :realtime_client,
   apikey: "some-JWT" # when using secure channels
 ```
 
-## Starting the Client Socket
+## Using a single Socket
 
-When configured correctly, you can add `RealtimeClient` to your supervision tree:
+If you don't need to create multiple client Sockets (e.g. one per user session) but only need one for your application, you can also
+start one as part of your supervision tree:
 
 ```elixir
   # application.ex
@@ -50,7 +97,7 @@ When configured correctly, you can add `RealtimeClient` to your supervision tree
   end
 ```
 
-## Example Worker
+### Example Worker
 
 ```elixir
 defmodule RealtimeApp.Worker do
