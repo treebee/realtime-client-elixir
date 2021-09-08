@@ -84,6 +84,34 @@ defmodule RealtimeClientTest do
     assert String.to_integer(record["id"]) == todo.id
   end
 
+  test "Can create sockets and receive message" do
+    {:ok, socket} = RealtimeClient.socket()
+    {:ok, socket2} = RealtimeClient.socket()
+    wait_for_socket(socket)
+    wait_for_socket(socket2)
+
+    {:ok, _} = RealtimeClient.subscribe(socket, "realtime:*")
+    {:ok, _} = RealtimeClient.subscribe(socket2, "realtime:public:todos")
+
+    todo = %Todo{user_id: 1, details: "todo"}
+    {:ok, todo} = Repo.insert(todo)
+
+    assert_receive %Message{
+      event: "INSERT",
+      topic: "realtime:*",
+      payload: %{"table" => "todos", "record" => record1}
+    }
+
+    assert_receive %Message{
+      event: "INSERT",
+      topic: "realtime:public:todos",
+      payload: %{"table" => "todos", "record" => record2}
+    }
+
+    assert String.to_integer(record1["id"]) == todo.id
+    assert String.to_integer(record2["id"]) == todo.id
+  end
+
   def wait_for_socket(_socket, n \\ 3)
   def wait_for_socket(_, 0), do: false
 
