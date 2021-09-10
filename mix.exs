@@ -5,7 +5,7 @@ defmodule RealtimeClient.MixProject do
     [
       name: "Realtime Client",
       app: :realtime_client,
-      version: "0.1.0",
+      version: "0.2.0",
       description: "A client for the Realtime (supabase/realtime) service.",
       elixir: "~> 1.11",
       package: package(),
